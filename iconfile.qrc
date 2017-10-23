@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icon/2Max.png</file>
+        <file>icon/2Min.png</file>
+        <file>icon/2X.png</file>
+        <file>icon/combox.gif</file>
+        <file>icon/42424.jpg</file>
+        <file>icon/delete.jpg</file>
+        <file>icon/export.png</file>
+        <file>icon/import.png</file>
+        <file>icon/jian.png</file>
+        <file>icon/manager.jpg</file>
+        <file>icon/newfile.png</file>
+        <file>icon/output.jpg</file>
+        <file>icon/save.jpg</file>
+        <file>icon/search.jpg</file>
+        <file>icon/search.png</file>
+        <file>icon/bk.png</file>
+        <file>icon/oo.jpg</file>
+        <file>icon/oo.png</file>
+    </qresource>
+</RCC>
