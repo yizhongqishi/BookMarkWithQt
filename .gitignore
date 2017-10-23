@@ -30,3 +30,16 @@
 *.exe
 *.out
 *.app
+
+#mine
+/test
+/release
+/debug
+Makefile
+*.Debug
+moc_*
+*.Release
+/data
+*.user
+
+
