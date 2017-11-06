@@ -19,6 +19,10 @@ public:
     void work();
     void up();
     void clear();
+//    void mousePressEvent(QMouseEvent *event);
+//    void mouseReleaseEvent(QMouseEvent *event);
+//    void mouseMoveEvent(QMouseEvent *event);
+//    void paintEvent(QPaintEvent *);
 
 private slots:
 
@@ -32,7 +36,11 @@ private slots:
 
     void on_cancel_clicked();
 
+    void on_back_2_clicked();
+
 private:
+    QPoint move_point;
+    bool mouse_press;
     Ui::categorymange *ui;
     QStringList categoryList;
     QList<QCheckBox*> list;

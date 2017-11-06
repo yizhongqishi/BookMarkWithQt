@@ -15,6 +15,7 @@ Dialog::Dialog(QWidget *parent) :
     ui->setupUi(this);
     this->filePre = "./data/his/";
     QDir dir(this->filePre);
+    int length = 600;
     QFileInfoList file_list = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
     //将所有展示出来的文件保存用于打开
     int ll = 0;
@@ -33,9 +34,9 @@ Dialog::Dialog(QWidget *parent) :
         }
     }
     if (ll <= 4){
-        this->resize(QSize(400, 160 + ll * 20));
+        this->resize(QSize(length, 160 + ll * 20));
     }else{
-        this->resize(QSize(400, 240));
+        this->resize(QSize(length, 240));
     }
 
 }

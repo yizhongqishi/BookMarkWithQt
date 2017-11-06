@@ -42,18 +42,25 @@ private:
        QPoint move_point;
        bool mouse_press;
 protected:
-//       void mousePressEvent(QMouseEvent *event);
-//       void mouseReleaseEvent(QMouseEvent *event);
-//       void mouseMoveEvent(QMouseEvent *event);
-//       void paintEvent(QPaintEvent *);
+       void mousePressEvent(QMouseEvent *event);
+       void mouseReleaseEvent(QMouseEvent *event);
+       void mouseMoveEvent(QMouseEvent *event);
+       void paintEvent(QPaintEvent *);
        void getCategody();
        void scanCategory();
        void delCategory();
        void removefile(const QString &path);
        void updatelist(QFileInfo info);
        void updatezzz(QStringList kk);
-       void save();
+       int save();
        void exportToWord(QList<WordItem> lsWordItem,QString strWordTemplete);
+       void removefile1(const QString &_Filename);
+       void checkfff();
+       void checktt();
+
+
+       void resizeEvent(QResizeEvent *);
+
 
 
 
@@ -81,7 +88,10 @@ private slots:
 
     void on_ss_clicked();
 
-    void on_categoryBox_currentIndexChanged(int index);
+    void on_categoryBox_currentIndexChanged();
+
+    void on_toolButton_clicked();
+
 
 private:
     Ui::MainWindow *ui;
@@ -97,9 +107,14 @@ private:
     QString category;
     QPushButton *m_push_scan;
     QStringList listtemp;
+    QStringList pathtemp;
     bool noteChange;
     bool feelingChange;
     bool categoryChange;
+    QListWidgetItem* delFile;
+    QTreeWidgetItem* checkDir;
+    QString checkCate;
+
 };
 
 #endif // MAINWINDOW_H

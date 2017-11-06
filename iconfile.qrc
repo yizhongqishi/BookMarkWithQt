@@ -14,9 +14,22 @@
         <file>icon/output.jpg</file>
         <file>icon/save.jpg</file>
         <file>icon/search.jpg</file>
-        <file>icon/search.png</file>
         <file>icon/bk.png</file>
         <file>icon/oo.jpg</file>
         <file>icon/oo.png</file>
+        <file>icon/l_bj.jpg</file>
+        <file>icon/1.png</file>
+        <file>icon/2.png</file>
+        <file>icon/3.png</file>
+        <file>icon/4.png</file>
+        <file>icon/5.png</file>
+        <file>icon/6.png</file>
+        <file>icon/7.png</file>
+        <file>icon/8.png</file>
+        <file>icon/logo.png</file>
+        <file>icon/top_bj.jpg</file>
+        <file>icon/左边树背景top.png</file>
+        <file>icon/title.png</file>
+        <file>icon/ss.png</file>
     </qresource>
 </RCC>

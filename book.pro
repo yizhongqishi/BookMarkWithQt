@@ -57,3 +57,5 @@ else:unix: LIBS += -L$$PWD/include/ -lquazip
 
 INCLUDEPATH += $$PWD/include
 DEPENDPATH += $$PWD/include
+
+RC_FILE+=logo.rc

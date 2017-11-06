@@ -6,11 +6,15 @@
 #include <QDateTime>
 #include <QTextStream>
 #include <QDebug>
+#include <QTextCodec>
+#include <QMouseEvent>
+#include <QPainter>
 
 categorymange::categorymange(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::categorymange)
 {
+    int length = 600;
     ui->setupUi(this);
     ui->cancel->setFocus();
     QFile file("./data/file/category.ini");
@@ -19,8 +23,8 @@ categorymange::categorymange(QWidget *parent) :
         return ;
     }
     while(!file.atEnd()){
-        QByteArray line = file.readLine();
-        QString str(line);
+        QTextCodec* code = QTextCodec::codecForName("GB2312");
+        QString str = code->toUnicode(file.readLine());
         //每行格式：category&&num
         QStringList list = str.split("&&");
         this->numList.append(list.at(1).trimmed());
@@ -36,11 +40,13 @@ categorymange::categorymange(QWidget *parent) :
         ll++;
     }
     if (ll <= 6){
-        this->resize(QSize(400, 200 + ll * 25));
+        this->resize(QSize(length, 250 + ll * 25));
     }else{
-        this->resize(QSize(400, 350));
+        this->resize(QSize(length, 400));
     }
+    this->setWindowFlags(Qt::FramelessWindowHint);
     qDebug()<<this->size();
+    QObject::connect(ui->addvalue,SIGNAL(returnPressed()),this,SLOT(on_add_clicked()));
 }
 
 categorymange::~categorymange()
@@ -102,9 +108,9 @@ void categorymange::up(){
        ll++;
     }
     if (ll <= 6){
-        this->resize(QSize(400, 200 + ll * 25));
+        this->resize(QSize(600, 250 + ll * 25));
     }else{
-        this->resize(QSize(400, 350));
+        this->resize(QSize(600, 400));
     }
     qDebug()<<this->size();
 }
@@ -152,3 +158,48 @@ void categorymange::on_cancel_clicked()
 {
     return accept();
 }
+
+void categorymange::on_back_2_clicked()
+{
+    this->close();
+}
+
+//void categorymange::mousePressEvent(QMouseEvent *event)
+//{
+//    if(event->button()==Qt::LeftButton)
+//    {
+//        mouse_press = true;
+
+//    }
+//    move_point =event->globalPos()-this->pos();
+
+//}
+
+//void categorymange::mouseReleaseEvent(QMouseEvent *event)
+//{
+//    if(mouse_press)
+//    {
+//       QPoint move_pos = event->globalPos();
+//       move(move_pos-move_point);
+//       setWindowOpacity(1);
+//    }
+//}
+
+//void categorymange::mouseMoveEvent(QMouseEvent *event)
+//{
+//    if(mouse_press)
+//    {
+//       QPoint move_pos = event->globalPos();
+//       move(move_pos-move_point);
+//       setWindowOpacity(0.7);
+//    }
+//}
+//void categorymange::paintEvent(QPaintEvent *e)
+//{
+//    categorymange::paintEvent(e);
+//    QPainter painter(this);
+//    QLinearGradient knbGradient(0,0,0,this->rect().height());
+//    knbGradient.setColorAt(0.0,QColor(255,0,0));
+//    painter.setPen(QPen(QColor(37,60,104),5,Qt::SolidLine,Qt::RoundCap));
+//    painter.drawRect(rect());
+//}
