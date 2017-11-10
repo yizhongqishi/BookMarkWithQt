@@ -20,7 +20,6 @@
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
-#include <QtGui/QListWidget>
 #include <QtGui/QMainWindow>
 #include <QtGui/QPushButton>
 #include <QtGui/QSpacerItem>
@@ -47,7 +46,6 @@ public:
     QToolButton *savefile;
     QToolButton *restorefile;
     QLabel *label_7;
-    QToolButton *toolButton;
     QToolButton *toword;
     QWidget *widget_workspace;
     QHBoxLayout *horizontalLayout;
@@ -64,7 +62,7 @@ public:
     QLineEdit *searchword;
     QVBoxLayout *verticalLayout_2;
     QLabel *label;
-    QListWidget *searchresults;
+    QTreeWidget *searchresults;
     QWidget *widget_3;
     QVBoxLayout *verticalLayout_6;
     QHBoxLayout *horizontalLayout_5;
@@ -327,24 +325,14 @@ public:
         label_7->setMinimumSize(QSize(259, 39));
         label_7->setMaximumSize(QSize(259, 39));
         label_7->setStyleSheet(QString::fromUtf8("border-image: url(:/icon/title.png);"));
-        toolButton = new QToolButton(widget_toolbar);
-        toolButton->setObjectName(QString::fromUtf8("toolButton"));
-        toolButton->setGeometry(QRect(1410, 0, 110, 57));
-        toolButton->setMinimumSize(QSize(110, 57));
-        toolButton->setMaximumSize(QSize(110, 16777215));
-        QIcon icon7;
-        icon7.addFile(QString::fromUtf8(":/icon/7.png"), QSize(), QIcon::Normal, QIcon::On);
-        toolButton->setIcon(icon7);
-        toolButton->setIconSize(QSize(48, 48));
-        toolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
         toword = new QToolButton(widget_toolbar);
         toword->setObjectName(QString::fromUtf8("toword"));
         toword->setGeometry(QRect(1228, 0, 170, 57));
         toword->setMinimumSize(QSize(170, 57));
         toword->setMaximumSize(QSize(180, 16777215));
-        QIcon icon8;
-        icon8.addFile(QString::fromUtf8(":/icon/2.png"), QSize(), QIcon::Normal, QIcon::On);
-        toword->setIcon(icon8);
+        QIcon icon7;
+        icon7.addFile(QString::fromUtf8(":/icon/2.png"), QSize(), QIcon::Normal, QIcon::On);
+        toword->setIcon(icon7);
         toword->setIconSize(QSize(48, 48));
         toword->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
         toword->setAutoRaise(true);
@@ -372,6 +360,7 @@ public:
         font.setItalic(false);
         font.setWeight(50);
         treeWidget->setFont(font);
+        treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
         treeWidget->setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);\n"
 "border-image: url(:/icon/\345\267\246\350\276\271\346\240\221\350\203\214\346\231\257top.png);"));
         treeWidget->setFrameShadow(QFrame::Plain);
@@ -427,9 +416,9 @@ public:
         ss->setMaximumSize(QSize(38, 38));
         ss->setCursor(QCursor(Qt::ArrowCursor));
         ss->setStyleSheet(QString::fromUtf8("border:0px"));
-        QIcon icon9;
-        icon9.addFile(QString::fromUtf8(":/icon/ss.png"), QSize(), QIcon::Normal, QIcon::On);
-        ss->setIcon(icon9);
+        QIcon icon8;
+        icon8.addFile(QString::fromUtf8(":/icon/ss.png"), QSize(), QIcon::Normal, QIcon::On);
+        ss->setIcon(icon8);
         ss->setIconSize(QSize(50, 50));
 
         horizontalLayout_9->addWidget(ss);
@@ -451,10 +440,13 @@ public:
 
         verticalLayout_2->addWidget(label);
 
-        searchresults = new QListWidget(widget_2);
+        searchresults = new QTreeWidget(widget_2);
+        QTreeWidgetItem *__qtreewidgetitem1 = new QTreeWidgetItem();
+        __qtreewidgetitem1->setText(0, QString::fromUtf8("1"));
+        searchresults->setHeaderItem(__qtreewidgetitem1);
         searchresults->setObjectName(QString::fromUtf8("searchresults"));
-        searchresults->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
-        searchresults->setSpacing(0);
+        searchresults->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);\n"
+"font: 12pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
 
         verticalLayout_2->addWidget(searchresults);
 
@@ -723,8 +715,7 @@ public:
         QWidget::setTabOrder(savefile, importfile);
         QWidget::setTabOrder(importfile, restorefile);
         QWidget::setTabOrder(restorefile, categorys);
-        QWidget::setTabOrder(categorys, toolButton);
-        QWidget::setTabOrder(toolButton, searchword);
+        QWidget::setTabOrder(categorys, searchword);
         QWidget::setTabOrder(searchword, ss);
         QWidget::setTabOrder(ss, searchresults);
         QWidget::setTabOrder(searchresults, treeWidget);
@@ -744,7 +735,6 @@ public:
         savefile->setText(QApplication::translate("MainWindow", "\344\277\235\345\255\230", 0, QApplication::UnicodeUTF8));
         restorefile->setText(QApplication::translate("MainWindow", "\345\257\274\345\207\272", 0, QApplication::UnicodeUTF8));
         label_7->setText(QString());
-        toolButton->setText(QApplication::translate("MainWindow", "\351\200\200\345\207\272", 0, QApplication::UnicodeUTF8));
         toword->setText(QApplication::translate("MainWindow", "\345\257\274\345\207\272\344\270\272word", 0, QApplication::UnicodeUTF8));
         ss->setText(QString());
         label->setText(QApplication::translate("MainWindow", "\347\254\224\350\256\260\345\210\227\350\241\250:", 0, QApplication::UnicodeUTF8));

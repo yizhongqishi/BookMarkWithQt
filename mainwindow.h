@@ -59,14 +59,17 @@ protected:
        void checktt();
 
 
+
        void resizeEvent(QResizeEvent *);
+
+       void closeEvent(QCloseEvent *event);
 
 
 
 
 private slots:
     void checkFile(QTreeWidgetItem* item);
-    void open(QListWidgetItem* item);
+    void open(QTreeWidgetItem* item);
     void on_savefile_clicked();
 
     void on_delfile_clicked();
@@ -90,8 +93,11 @@ private slots:
 
     void on_categoryBox_currentIndexChanged();
 
-    void on_toolButton_clicked();
+    void changetext();
 
+    void treeWidget_customContextMenuRequested(const QPoint &pos);
+
+    void delcate();
 
 private:
     Ui::MainWindow *ui;
@@ -111,9 +117,10 @@ private:
     bool noteChange;
     bool feelingChange;
     bool categoryChange;
-    QListWidgetItem* delFile;
+    QTreeWidgetItem* delFile;
     QTreeWidgetItem* checkDir;
     QString checkCate;
+    QTreeWidgetItem* item1;
 
 };
 

@@ -84,6 +84,11 @@ void categorymange::on_del_clicked()
 {
     QStringList temp1;
     QStringList temp2;
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, QString::fromUtf8("警告"), QString::fromUtf8("该类别下所有笔记也会被删除，是否继续？"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+    if (reply == QMessageBox::No){
+        return ;
+    }
     foreach (QCheckBox* checkbox, this->list) {
         if (!checkbox->isChecked()){
             temp1.append(checkbox->text());
@@ -122,10 +127,6 @@ void categorymange::on_back_clicked()
     //返回主界面信号
 }
 
-void categorymange::on_apply_clicked()
-{
-    this->ss();
-}
 
 void categorymange::ss(){
     QString stri = "";

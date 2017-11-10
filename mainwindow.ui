@@ -472,45 +472,6 @@ QToolButton::menu-indicator{
            <string/>
           </property>
          </widget>
-         <widget class="QToolButton" name="toolButton">
-          <property name="geometry">
-           <rect>
-            <x>1410</x>
-            <y>0</y>
-            <width>110</width>
-            <height>57</height>
-           </rect>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>110</width>
-            <height>57</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>110</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>退出</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normalon>:/icon/7.png</normalon>
-           </iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>48</width>
-            <height>48</height>
-           </size>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextBesideIcon</enum>
-          </property>
-         </widget>
          <widget class="QToolButton" name="toword">
           <property name="geometry">
            <rect>
@@ -595,6 +556,9 @@ QToolButton::menu-indicator{
               <italic>false</italic>
               <bold>false</bold>
              </font>
+            </property>
+            <property name="contextMenuPolicy">
+             <enum>Qt::CustomContextMenu</enum>
             </property>
             <property name="styleSheet">
              <string notr="true">color: rgb(255, 255, 255);
@@ -788,13 +752,16 @@ border: 1px solid #97d2ff;
                       </widget>
                      </item>
                      <item>
-                      <widget class="QListWidget" name="searchresults">
+                      <widget class="QTreeWidget" name="searchresults">
                        <property name="styleSheet">
-                        <string notr="true">background-color: rgb(255, 255, 255);</string>
+                        <string notr="true">background-color: rgb(255, 255, 255);
+font: 12pt &quot;微软雅黑&quot;;</string>
                        </property>
-                       <property name="spacing">
-                        <number>0</number>
-                       </property>
+                       <column>
+                        <property name="text">
+                         <string notr="true">1</string>
+                        </property>
+                       </column>
                       </widget>
                      </item>
                     </layout>
@@ -1206,7 +1173,6 @@ border: 1px solid #97d2ff;
   <tabstop>importfile</tabstop>
   <tabstop>restorefile</tabstop>
   <tabstop>categorys</tabstop>
-  <tabstop>toolButton</tabstop>
   <tabstop>searchword</tabstop>
   <tabstop>ss</tabstop>
   <tabstop>searchresults</tabstop>

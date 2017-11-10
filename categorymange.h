@@ -32,8 +32,6 @@ private slots:
 
     void on_back_clicked();
 
-    void on_apply_clicked();
-
     void on_cancel_clicked();
 
     void on_back_2_clicked();
