@@ -16,11 +16,13 @@ SOURCES += \
         main.cpp\
         mainwindow.cpp \
     categorymange.cpp \
-    dialog.cpp
+    dialog.cpp \
+    treewidget.cpp
 
 HEADERS  += mainwindow.h \
     categorymange.h \
     dialog.h \
+    treewidget.h
 #    include/crypt.h \
 #    include/ioapi.h \
 #    include/JlCompress.h \

@@ -63,6 +63,10 @@ void categorymange::on_add_clicked()
     }else if (this->categoryList.contains(value)){
          QMessageBox::warning(this, QString::fromUtf8("错误"), QString::fromUtf8("标签名称不能重复"));
     }else{
+        if (value.length() > 16){
+            QMessageBox::warning(this, QString::fromUtf8("错误"), QString::fromUtf8("名称长度不能超过16！"));
+            return ;
+        }
         this->categoryList.append(value);
         this->numList.append(QDateTime::currentDateTime().toString("yyyyMMddhhmmss"));
         QCheckBox* checkbox = new QCheckBox(this);

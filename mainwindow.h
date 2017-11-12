@@ -69,7 +69,9 @@ protected:
 
 private slots:
     void checkFile(QTreeWidgetItem* item);
+
     void open(QTreeWidgetItem* item);
+
     void on_savefile_clicked();
 
     void on_delfile_clicked();
@@ -83,6 +85,7 @@ private slots:
     void on_toword_clicked();
 
     void on_newfile_clicked();
+
     void search();
 
     void on_note_textChanged();
@@ -93,11 +96,21 @@ private slots:
 
     void on_categoryBox_currentIndexChanged();
 
-    void changetext();
+//    void changetext();
 
-    void treeWidget_customContextMenuRequested(const QPoint &pos);
+//    void treeWidget_customContextMenuRequested(const QPoint &pos);
 
-    void delcate();
+//    void delcate();
+
+//    void on_treeWidget_itemSelectionChanged();
+
+    void on_treeWidget_itemChanged(QTreeWidgetItem *item, int column);
+
+    void on_treeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column);
+
+    void on_searchresults_itemDoubleClicked(QTreeWidgetItem *item, int column);
+
+    void on_searchresults_itemChanged(QTreeWidgetItem *item, int column);
 
 private:
     Ui::MainWindow *ui;
@@ -121,7 +134,10 @@ private:
     QTreeWidgetItem* checkDir;
     QString checkCate;
     QTreeWidgetItem* item1;
-
+    QString hisca;
+    QString hisfi;
+    bool caChange;
+    bool fiChange;
 };
 
 #endif // MAINWINDOW_H

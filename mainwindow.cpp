@@ -36,15 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->cli = false;
     ui->hh->hide();
-
-//    this->resize(QSize(1500,631));
-//    QTextCodec::setCodecForCStrings( QTextCodec::codecForName("UTF8"));
-    //设置窗口大小
-//    QDesktopWidget* dddd = QApplication::desktop();
-//    QRect rr = dddd->screenGeometry();
-//    this->setGeometry(0,0,rr.width(),rr.height()-40);
     ui->widget_workspace->setAutoFillBackground(true);
-    //this->setFixedSize(QSize(this));
     //默认最大化
     this->showMaximized();
     QPalette pal(palette());
@@ -75,14 +67,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->createtime->setText(QDateTime::currentDateTime().toString("yyyy/MM/dd"));
     ui->updatetime->setText(QDateTime::currentDateTime().toString("yyyy/MM/dd"));
 
-
     QObject::connect(ui->searchword,SIGNAL(returnPressed()),this,SLOT(search()));
 
     this->getCategody();
-
     QObject::connect(ui->treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)),this,SLOT(checkFile(QTreeWidgetItem*)));
+//    connect(ui->treeWidget,SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(treeWidget_customContextMenuRequested(const QPoint&)));
 
-    connect(ui->treeWidget,SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(treeWidget_customContextMenuRequested(const QPoint&)));
     QObject::connect(ui->searchresults, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(open(QTreeWidgetItem*)));
 
     QAction *action = new QAction(this);
@@ -101,6 +91,8 @@ MainWindow::MainWindow(QWidget *parent) :
     list.append(QString::fromUtf8("笔记名称"));
     list.append(QString::fromUtf8("更新时间"));
     ui->searchresults->setHeaderLabels(list);
+    this->item1 = NULL;
+    this->hisca = "";
 }
 
 MainWindow::~MainWindow()
@@ -244,6 +236,7 @@ void MainWindow::scanCategory()
     int i = 0;
     foreach (QString num, this->categoryList){
         QTreeWidgetItem* item = new QTreeWidgetItem();
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
         item->setText(0, num);
         this->categoryTree->addChild(item);
         //针对编码进行目录的扫描，对于没有实体目录的编码创建目录
@@ -280,7 +273,6 @@ void MainWindow::delCategory(){
     for (int i = j - 1; i >= 0; i--){
         ui->treeWidget->takeTopLevelItem(i);
     }
-//    ui->treeWidget->clear();
     delete(this->categoryTree);
     this->categoryTree = new QTreeWidgetItem();
     this->categoryTree->setText(0, QString::fromUtf8("全部类别"));
@@ -292,8 +284,6 @@ void MainWindow::delCategory(){
 void MainWindow::checkFile(QTreeWidgetItem* item){
     //接下来需要恢复删除笔记后的记录
     //屏蔽右键
-    qDebug()<<QApplication::mouseButtons();
-    if (QApplication::mouseButtons() & Qt::LeftButton) return;
     this->checkDir = item;
     this->delFile = NULL;
 
@@ -320,6 +310,11 @@ void MainWindow::checkFile(QTreeWidgetItem* item){
         dir.mkpath("./");
     }
     ui->searchresults->clear();
+    QTreeWidgetItem* item1 = new QTreeWidgetItem();
+    item1->setText(0, QString::fromUtf8("笔记名称"));
+    item1->setText(1, QString::fromUtf8("更改时间"));
+    ui->searchresults->setHeaderItem(item1);
+    ui->searchresults->setColumnWidth(0, 200);
     QFileInfoList file_list = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
     //将所有展示出来的文件保存用于打开
     foreach (QFileInfo info , file_list){
@@ -338,15 +333,13 @@ void MainWindow::checkFile(QTreeWidgetItem* item){
 
 void MainWindow::updatelist(QFileInfo info){
     //将所有展示出来的文件保存用于打开
-    QTreeWidgetItem* item1 = new QTreeWidgetItem();
-    item1->setText(0, QString::fromUtf8("笔记名称"));
-    item1->setText(1, QString::fromUtf8("更改时间"));
-    ui->searchresults->setHeaderItem(item1);
+
 
     QTreeWidgetItem* item = new QTreeWidgetItem();
     item->setText(0, info.fileName().split(".").at(0));
+    item->setFlags(item->flags() | Qt::ItemIsEditable);
     info.lastModified().toString("yyyy/MM/dd");
-    QVariant value = info.absoluteFilePath();
+    QVariant value = info.absolutePath() + '/';
     item->setText(1, info.lastModified().toString("yyyy/MM/dd"));
     //保存文件路径用于访问
     item->setData(0, 32, value);
@@ -366,7 +359,6 @@ void MainWindow::on_savefile_clicked()
 }
 
 void MainWindow::checktt(){
-    qDebug()<<this->checkCate;
     QString path = this->findPath;
     if (this->categoryList.indexOf(this->checkCate) == -1){
         this->checkCate = "";
@@ -395,11 +387,22 @@ void MainWindow::checktt(){
     }
 }
 int MainWindow::save(){
-    QString nn = ui->nameEd->text();
+    QString nn = ui->nameEd->text().remove(QRegExp("\\s"));
     if (QString::compare(nn,"") == 0){
-        QMessageBox::warning(this, QString::fromUtf8("错误"), QString::fromUtf8("书名不能为空"));
+        QMessageBox::warning(this, QString::fromUtf8("错误"), QString::fromUtf8("书名不能为空或只包含空格！"));
         return 1;
     }else{
+        if (nn.length() > 16){
+            QMessageBox::warning(this, QString::fromUtf8("错误"), QString::fromUtf8("名称长度不能超过16！"));
+            return 1;
+        }
+        QString pattern("[\\\\/:*?\"<>]");
+        QRegExp rx(pattern);
+        int match = nn.indexOf(rx);
+        if(match >= 0){
+            QMessageBox::warning(this, QString::fromUtf8("错误"), QString::fromUtf8("名称包含非法字符！"));
+            return 1;
+        }
         if (!(ui->nameEd->isModified() || ui->author->isModified() || this->noteChange || ui->madetime->isModified() || ui->place->isModified() || this->feelingChange || this->categoryChange)){
             QMessageBox::warning(this, QString::fromUtf8("提示"), QString::fromUtf8("并没有产生修改"));
             return 1;
@@ -523,10 +526,10 @@ void MainWindow::open(QTreeWidgetItem* item){
     this->delFile = item;
     QString file_name = item->text(0);
     QString path = item->data(0, 32).toString();
-    qDebug()<<1;
-    this->filePath = path;
+    this->filePath = path + file_name + ".io";
     QFile file(this->filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        QMessageBox::warning(this, QString::fromUtf8("错误"), QString::fromUtf8("没有找到笔记！"));
         //异常处理
     }
     while(!file.atEnd()){
@@ -573,7 +576,6 @@ void MainWindow::on_delfile_clicked()
     if (reply == QMessageBox::No){
         return ;
     }
-    this->filePath = "";
     //删除选中笔记
     this->removefile1(this->delFile->data(0, 32).toString());
     this->checkfff();
@@ -581,7 +583,8 @@ void MainWindow::on_delfile_clicked()
     ui->createtime->setText(QDateTime::currentDateTime().toString("yyyy/MM/dd"));
     ui->updatetime->setText(QDateTime::currentDateTime().toString("yyyy/MM/dd"));
     ui->nameEd->clear();
-    ui->categoryBox->setCurrentIndex(0);
+//    ui->categoryBox->setCurrentIndex(0);
+    ui->categoryBox->setCurrentIndex(this->categoryList.indexOf(this->checkCate));
     ui->note->clear();
     ui->feeling->clear();
     ui->author->clear();
@@ -620,6 +623,7 @@ void MainWindow::checkfff(){
         cate = "";
     }
     this->checkCate = cate;
+    ui->treeWidget->setCurrentItem(item);
     QDir dir(this->findPath + name);
     if (!dir.exists()){
         dir.mkpath("./");
@@ -673,8 +677,6 @@ void MainWindow::on_importfile_clicked()
             ui->author->clear();
             ui->place->clear();
             ui->madetime->clear();
-            this->filePath = "";
-            this->bookname = "";
             ui->nameEd->setModified(false);
             ui->author->setModified(false);
             this->noteChange = false;
@@ -695,7 +697,6 @@ void MainWindow::on_categorys_clicked()
     if(mange.exec()==QDialog::Accepted){
         this->getCategody();
         this->checktt();
-//        QMessageBox::information(this, QString::fromUtf8("提示"), QString::fromUtf8("类别操作保存成功"));
     }
 }
 
@@ -880,30 +881,122 @@ void MainWindow::closeEvent(QCloseEvent *event){
     this->close();
 }
 
-void MainWindow::treeWidget_customContextMenuRequested(const QPoint &pos)
+//void MainWindow::treeWidget_customContextMenuRequested(const QPoint &pos)
+//{
+//    QTreeWidgetItem* curItem=ui->treeWidget->itemAt(pos);  //获取当前被点击的节点
+//    if(curItem==NULL)return;           //这种情况是右键的位置不在treeItem的范围内，即在空白位置右击
+//    QVariant var = curItem->data(0, 32);
+//    if(0 == var)      //data(...)返回的data已经在之前建立节点时用setdata()设置好
+//    {
+//        return ;
+//    }else{
+//        this->item1 = curItem;
+//        QMenu *popMenu =new QMenu(this);//定义一个右键弹出菜单
+//        QAction* changeText = popMenu->addAction(QString::fromUtf8("重命名"));
+//        connect(changeText, SIGNAL(triggered()), this, SLOT(changetext()));
+//        QAction* delCate = popMenu->addAction(QString::fromUtf8("删除"));
+//        connect(delCate, SIGNAL(triggered()), this, SLOT(delcate()));
+//        popMenu->exec(QCursor::pos());//弹出右键菜单，菜单位置为光标位置
+
+//    }
+//}
+
+void MainWindow::on_treeWidget_itemChanged(QTreeWidgetItem *item, int column)
 {
-    QTreeWidgetItem* curItem=ui->treeWidget->itemAt(pos);  //获取当前被点击的节点
-    if(curItem==NULL)return;           //这种情况是右键的位置不在treeItem的范围内，即在空白位置右击
-    QVariant var = curItem->data(0, 32);
-    if(0 == var)      //data(...)返回的data已经在之前建立节点时用setdata()设置好
-    {
+    if (QString::compare(this->hisca, item->text(0)) == 0) return ;
+    if (item->text(0) == ""){
+        QMessageBox::warning(this, QString::fromUtf8("错误"), QString::fromUtf8("名称不能为空！"));
+        item->setText(0, this->hisca);
         return ;
     }else{
-        this->item1 = curItem;
-        QMenu *popMenu =new QMenu(this);//定义一个右键弹出菜单
-        QAction* changeText = popMenu->addAction(QString::fromUtf8("重命名"));
-        connect(changeText, SIGNAL(triggered()), this, SLOT(changetext()));
-        QAction* delCate = popMenu->addAction(QString::fromUtf8("删除"));
-        connect(delCate, SIGNAL(triggered()), this, SLOT(delcate()));
-        popMenu->exec(QCursor::pos());//弹出右键菜单，菜单位置为光标位置
-
+        if (item->text(0).length() > 16){
+            QMessageBox::warning(this, QString::fromUtf8("错误"), QString::fromUtf8("名称长度不能超过16！"));
+            item->setText(0, this->hisca);
+            return ;
+        }
     }
+
+    int index = this->categoryList.indexOf(this->hisca);
+    qDebug()<<index;
+    this->categoryList.removeAt(index);
+
+    this->categoryList.insert(index, item->text(0));
+    qDebug()<<this->categoryList;
+    QString stri = "";
+    int i = 0;
+    foreach (QString category, this->categoryList) {
+       stri = stri + category + "&&" + this->numList.at(i) + "\n";
+       i++;
+    }
+    stri = stri.mid(0, stri.length() - 1);
+    qDebug()<<stri;
+    QFile file("./data/file/category.ini");
+
+    //写入类型文件
+    if(file.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text)){
+
+        QTextStream txtOutput(&file);
+        txtOutput << stri;
+        txtOutput.flush();
+        file.close();
+        QMessageBox::information(this, QString::fromUtf8("提示"), QString::fromUtf8("名称更改成功"));
+    }else{
+        QMessageBox::warning(this, QString::fromUtf8("错误"), QString::fromUtf8("名称更改失败"));
+    }
+    i = ui->categoryBox->currentIndex();
+    bool t = this->categoryChange;
+    ui->categoryBox->clear();
+    ui->categoryBox->update();
+    foreach (QString k, this->categoryList) {
+       ui->categoryBox->addItem(k);
+    }
+    ui->categoryBox->setCurrentIndex(i);
+    this->categoryChange = t;
 }
 
-void MainWindow::changetext(){
-    ui->treeWidget->openPersistentEditor(this->item1, 0);
+void MainWindow::on_treeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column)
+{
+    this->hisca = item->text(0);
 }
 
-void MainWindow::delcate(){
+void MainWindow::on_searchresults_itemDoubleClicked(QTreeWidgetItem *item, int column)
+{
+    this->hisfi = item->text(0);
+}
 
+void MainWindow::on_searchresults_itemChanged(QTreeWidgetItem *item, int column)
+{
+    if (QString::compare(this->hisfi, item->text(0)) == 0) return ;
+    QString kk = item->text(0).remove(QRegExp("\\s"));
+    if (kk == ""){
+        QMessageBox::warning(this, QString::fromUtf8("错误"), QString::fromUtf8("名称不能为空！"));
+        item->setText(0, this->hisfi);
+        return ;
+    }else{
+        if (kk.length() > 16){
+            QMessageBox::warning(this, QString::fromUtf8("错误"), QString::fromUtf8("名称长度不能超过16！"));
+            item->setText(0, this->hisfi);
+            return ;
+        }
+    }
+    QString pattern("[\\\\/:*?\"<>]");
+    QRegExp rx(pattern);
+    int match = kk.indexOf(rx);
+    if(match >= 0){
+        QMessageBox::warning(this, QString::fromUtf8("错误"), QString::fromUtf8("名称包含非法字符！"));
+        item->setText(0, this->hisfi);
+        return ;
+    }
+    //重命名笔记文件
+    QString prePath = item->data(0, 32).toString();
+    qDebug()<<prePath;
+    bool t = QFile::rename(prePath + this->hisfi + ".io", prePath + kk + ".io");
+    if (t){
+        QMessageBox::information(this, QString::fromUtf8("提示"), QString::fromUtf8("笔记改名成功"));
+        this->filePath = prePath + kk + ".io";
+
+    }else{
+        QMessageBox::information(this, QString::fromUtf8("提示"), QString::fromUtf8("笔记改名失败"));
+        item->setText(0, this->hisfi);
+    }
 }

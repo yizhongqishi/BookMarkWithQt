@@ -28,6 +28,7 @@
 #include <QtGui/QTreeWidget>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QWidget>
+#include <treewidget.h>
 
 QT_BEGIN_NAMESPACE
 
