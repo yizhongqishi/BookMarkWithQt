@@ -57,8 +57,7 @@ protected:
        void removefile1(const QString &_Filename);
        void checkfff();
        void checktt();
-
-
+       void ss(QString pa, QString ca);
 
        void resizeEvent(QResizeEvent *);
 

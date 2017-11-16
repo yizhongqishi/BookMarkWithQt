@@ -142,10 +142,9 @@ void MainWindow::search(){
             int i = 0;
             foreach (QString temp, this->listtemp){
                 QTreeWidgetItem* item = new QTreeWidgetItem();
-                item->setText(0, temp.split(".").at(0));
+                item->setText(0, temp);
                 QFileInfo fileInfo(this->pathtemp.at(i));
-                fileInfo.lastModified().toString("yyyy/MM/dd");
-                QVariant value = this->pathtemp.at(i);
+                QVariant value = fileInfo.absolutePath() + "/";
                 item->setText(1, fileInfo.lastModified().toString("yyyy/MM/dd"));
                 //保存文件路径用于访问
                 item->setData(0, 32, value);
@@ -158,13 +157,14 @@ void MainWindow::search(){
         QStringList li;
         QStringList pa;
         for (int i = 0; i < ui->searchresults->topLevelItemCount(); i++){
-            this->listtemp.append(ui->searchresults->topLevelItem(i)->text(0) + ".io");
-            this->pathtemp.append(ui->searchresults->topLevelItem(i)->data(0, 32).toString());
+            this->listtemp.append(ui->searchresults->topLevelItem(i)->text(0));
+            this->pathtemp.append(ui->searchresults->topLevelItem(i)->data(0, 32).toString() + ui->searchresults->topLevelItem(i)->text(0) + ".io");
             if (re.indexIn(ui->searchresults->topLevelItem(i)->text(0)) != -1){
                 li.append(ui->searchresults->topLevelItem(i)->text(0));
                 pa.append(ui->searchresults->topLevelItem(i)->data(0, 32).toString());
             }else{
-                QFile file(ui->searchresults->topLevelItem(i)->data(0, 32).toString());
+                qDebug()<<ui->searchresults->topLevelItem(i)->data(0, 32).toString();
+                QFile file(ui->searchresults->topLevelItem(i)->data(0, 32).toString() + ui->searchresults->topLevelItem(i)->text(0) + ".io");
                 if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
                     //异常处理
                     QMessageBox::warning(this, QString::fromUtf8("错误"), QString::fromUtf8("文件访问错误"));
@@ -189,7 +189,6 @@ void MainWindow::search(){
             QTreeWidgetItem* item = new QTreeWidgetItem();
             item->setText(0, l.split(".").at(0));
             QFileInfo fileInfo(this->pathtemp.at(i));
-            fileInfo.lastModified().toString("yyyy/MM/dd");
             QVariant value = pa.at(i);
             item->setText(1, fileInfo.lastModified().toString("yyyy/MM/dd"));
             //保存文件路径用于访问
@@ -919,7 +918,7 @@ void MainWindow::on_treeWidget_itemChanged(QTreeWidgetItem *item, int column)
     int index = this->categoryList.indexOf(this->hisca);
     qDebug()<<index;
     this->categoryList.removeAt(index);
-
+    this->ss(this->numList.at(index), item->text(0));
     this->categoryList.insert(index, item->text(0));
     qDebug()<<this->categoryList;
     QString stri = "";
@@ -954,6 +953,45 @@ void MainWindow::on_treeWidget_itemChanged(QTreeWidgetItem *item, int column)
     this->categoryChange = t;
 }
 
+void MainWindow::ss(QString pa, QString ca){
+    QDir dir(this->findPath + pa);
+    QFileInfoList file_list = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+    //将所有展示出来的文件保存用于打开
+    foreach (QFileInfo info , file_list){
+        //点击的为全部类别，需要对于文件夹进行迭代遍历
+        QFile file(info.absoluteFilePath());
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+            QMessageBox::warning(this, QString::fromUtf8("错误"), QString::fromUtf8("没有找到笔记！"));
+            //异常处理
+        }
+        QString str;
+        while(!file.atEnd()){
+            QTextCodec* code = QTextCodec::codecForName("GB2312");
+            str = code->toUnicode(file.readAll());
+            break;
+        }
+        file.close();
+
+        QStringList list = str.split(this->thespace);
+        list.removeAt(3);
+        list.insert(3, ca);
+        list.removeAt(1);
+        list.insert(1, QDateTime::currentDateTime().toString("yyyy/MM/dd"));
+        QString thesave = list.at(0);
+        int i = 1;
+        while (i < list.length()){
+            thesave += this->thespace;
+            thesave += list.at(i);
+            i++;
+        }
+        QFile f(info.absoluteFilePath());
+        if(f.open(QIODevice::ReadWrite | QIODevice::Truncate| QIODevice::Text)){
+            QTextStream txtOutput(&f);
+            txtOutput<<thesave;
+            f.close();
+          }
+    }
+}
 void MainWindow::on_treeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
     this->hisca = item->text(0);
